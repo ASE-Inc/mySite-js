@@ -1,27 +1,28 @@
 /* Author: Abhishek Munie */
+window.jQuery || document.write("\x3Cscript src='https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js'\x3e\x3C/script\x3e");
 
-window.jQuery||document.write("\x3Cscript src='https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js'\x3e\x3C/script\x3e");
 $('html').addClass(RegExp(" AppleWebKit/").test(navigator.userAgent)?'applewebkit':'not-applewebkit');
-var config=$.extend(true,{
-    urls:{
-        resource:location.protocol+'//'+location.hostname+'/',
-        workers:{
-            ajax:"/modules/ajaxloader.worker.js",
-            jsonp:"/modules/jsonploader.worker.js"
+
+var mySite_config = $.extend(true, {
+    urls: {
+        resource: location.protocol+'//'+location.hostname+'/',
+        workers: {
+            ajax: "/modules/ajaxloader.worker.js",
+            jsonp: "/modules/jsonploader.worker.js"
         }
     },
-    preloads:[],
-    twitter_streams:[],
-    flickr_photostreams:[],
-    facebookAppId:'',
-    googleAnalyticsID:'',
-    enable:{
+    preloads: [],
+    twitter_streams: [],
+    flickr_photostreams: [],
+    facebookAppId: '',
+    googleAnalyticsID: '',
+    enable: {
         facebook:true,
         google_plus:true,
         google_search:true,
         cufon:true
     }
-},window.config);
+}, window.mySite_config);
 
 // Avoid `console` errors in browsers that lack a console.
 if (!(window.console && console.log)) {
@@ -91,7 +92,7 @@ function Location(location){
 
 var mySite=$.extend(true,{
     domain:location.protocol+'//'+location.hostname+'/',
-    resource:config.urls.resource,
+    resource:mySite_config.urls.resource,
     qualifyURL:qualifyURL,
     getLevels:getLevels,
     /* Internal: Parse URL components and returns a Locationish object.
@@ -205,49 +206,33 @@ var mySite=$.extend(true,{
         return newObj;
     },
     // remove all own properties on obj, effectively reverting it to a new object
-    wipeObject:function(obj){
+    wipeObject: function(obj){
         for(var p in obj)
             if(obj.hasOwnProperty(p))
                 delete obj[p];
     },
-    /*loadScript:function (url){
-        var req=new XMLHttpRequest();
-        req.onreadystatechange=function(e){
-            if(req.readyState===4){//4=Loaded
-                if(req.status===200){
-                    eval(req.responseText);
-                }else{
-                //Error
-                }
+    relative_time: function prettyDate(rawdate) {
+        var date, seconds, formats, i = 0, f;
+        date = new Date(rawdate);
+        seconds = (new Date() - date) / 1000;
+        formats = [
+            [60, 'seconds', 1],
+            [120, '1 minute ago'],
+            [3600, 'minutes', 60],
+            [7200, '1 hour ago'],
+            [86400, 'hours', 3600],
+            [172800, 'Yesterday'],
+            [604800, 'days', 86400],
+            [1209600, '1 week ago'],
+            [2678400, 'weeks', 604800]
+        ];
+
+        while (f = formats[i ++]) {
+            if (seconds < f[0]) {
+                return f[2] ? Math.floor(seconds / f[2]) + ' ' + f[1] + ' ago' :  f[1];
             }
         }
-        req.open("GET", url, true);
-        req.send();
-    },*/
-    relative_time:function(time_value){
-        var values=time_value.split(" ");
-        time_value=values[1]+" "+values[2]+", "+values[5]+" "+values[3];
-        var parsed_date=Date.parse(time_value);
-        var relative_to=(arguments.length>1)?arguments[1]:new Date();
-        var delta=parseInt((relative_to.getTime()-parsed_date)/1000);
-        delta=delta+(relative_to.getTimezoneOffset()*60);
-        var r='';
-        if(delta<60){
-            r='a minute ago';
-        }else if(delta<120){
-            r='couple of minutes ago';
-        }else if(delta<(45*60)){
-            r=(parseInt(delta/60)).toString()+' minutes ago';
-        }else if(delta<(90*60)){
-            r='an hour ago';
-        }else if(delta<(24*60*60)){
-            r=''+(parseInt(delta/3600)).toString()+' hours ago';
-        }else if(delta<(48*60*60)){
-            r='1 day ago';
-        }else{
-            r=(parseInt(delta/86400)).toString()+' days ago';
-        }
-        return r;
+        return 'A while ago';
     },
     safeCallback:function(callback, safeAfter) {
         return function() {
@@ -279,10 +264,10 @@ mySite.location.is404=!!$('.container404')[0];
 if(mySite.location.params.serviceMode)$('html').addClass('serviceMode');
 //navigator.registerProtocolHandler("abhishekmunie","http://abhishekmunie.com/","abhishekmunie Protocol");
 
-if(config.enable.facebook){
+if(mySite_config.enable.facebook){
     window.fbAsyncInit=function(){
         FB.init({
-            appId     :config.facebookAppId, // App ID
+            appId     :mySite_config.facebookAppId, // App ID
             channelUrl:'http//'+document.domain+'/channel.html', // Channel File
             status    :true, // check login status
             cookie    :true, // enable cookies to allow the server to access the session
@@ -444,10 +429,10 @@ if(config.enable.facebook){
         FB.Event.subscribe('auth.logout',function(response){});
     };
     // Load the SDK Asynchronously
-    if(!document.getElementById('facebook-jssdk'))mySite.importScript("//connect.facebook.net/en_US/all.js#appId="+config.facebookAppId,false,'facebook-jssdk');
+    if(!document.getElementById('facebook-jssdk'))mySite.importScript("//connect.facebook.net/en_US/all.js#appId="+mySite_config.facebookAppId,false,'facebook-jssdk');
 }
 
-if(config.enable.google_plus){
+if(mySite_config.enable.google_plus){
     window.___gcfg.parsetags='explicit';
     mySite.importScript('https://apis.google.com/js/plusone.js');
 }
@@ -580,7 +565,7 @@ mySite.BlobWorker.prototype=function(){
             var THIS=this;
             this.loadOEmbed=function(){
                 if(Modernizr.webworkers){
-                    this.worker=new Worker(config.urls.workers.jsonp);
+                    this.worker=new Worker(mySite_config.urls.workers.jsonp);
                     this.worker.addEventListener('message',function(event){
                         if(event.data.type=="debug"){
                             console.log(JSON.stringify(event.data.data));
@@ -651,12 +636,12 @@ mySite.BlobWorker.prototype=function(){
         }
     }catch(e){}
 
-    mySite.flickr_photostreams[config.flickr_photostreams[0]]={
+    mySite.flickr_photostreams[mySite_config.flickr_photostreams[0]]={
         photos:[]
     };
     $.getJSON("http://api.flickr.com/services/feeds/photos_public.gne?ids=40168771@N07&lang=en-us&format=json&jsoncallback=?", function(data){
         $.each(data.items,function(index,item){
-            mySite.flickr_photostreams[config.flickr_photostreams[0]].photos.push(item);
+            mySite.flickr_photostreams[mySite_config.flickr_photostreams[0]].photos.push(item);
         });
     });
 
@@ -1133,7 +1118,7 @@ mySite.BlobWorker.prototype=function(){
                 }
                 preprocess(this.queue['current']);
                 if(Modernizr.webworkers&&this.useWebWorkers){
-                    this.ajaxloader=new Worker(config.urls.workers[this.queue['current'].dataType||'ajax']);
+                    this.ajaxloader=new Worker(mySite_config.urls.workers[this.queue['current'].dataType||'ajax']);
                     this.ajaxloader.addEventListener('message',function(event){
                         try{
                             THIS.ajaxCritical=true;
@@ -1277,10 +1262,10 @@ jQuery(document).ready(function($){
         mySite.enhanced=true;
         $(document).updateSocialPlugins();
         mySite.refresh();
-        if(config.enable.cufon)mySite.importScript('//js.abhishekmunie.com/libs/cufon-yui.basicfonts.js',true);
-        for(var i=0;i<config.twitter_streams.length;i++)
-            mySite.twitter_streams[config.twitter_streams[i]]=mySite.createTwitterStream(config.twitter_streams[i]);
-        setTimeout("$.preload(config.preloads)",5000);
+        if(mySite_config.enable.cufon)mySite.importScript('//js.abhishekmunie.com/libs/cufon-yui.basicfonts.js',true);
+        for(var i=0;i<mySite_config.twitter_streams.length;i++)
+            mySite.twitter_streams[mySite_config.twitter_streams[i]]=mySite.createTwitterStream(mySite_config.twitter_streams[i]);
+        setTimeout("$.preload(mySite_config.preloads)",5000);
         $('html').addClass('enhanced');
     }
     $(window).load(function(){
@@ -1346,7 +1331,7 @@ jQuery(document).ready(function($){
 
         });
     $('body').append(mySite.overlayTheater.theater);
-    if(config.enable.google_search)mySite.importScript("https://www.google.com/jsapi?callback=loadGoogleJSApi",true);
+    if(mySite_config.enable.google_search)mySite.importScript("https://www.google.com/jsapi?callback=loadGoogleJSApi",true);
     mySite.update();
     $('body').drawDoc();
     $('html').addClass('initialized');
@@ -1365,12 +1350,12 @@ function loadGoogleJSApi(){
             imageSearchOptions['layout']=google.search.ImageSearch.LAYOUT_POPUP;
             customSearchOptions['enableImageSearch']=true;
             customSearchOptions['imageSearchOptions']=imageSearchOptions;
-            var customSearchControl=new google.search.CustomSearchControl(config.googleCSEId,customSearchOptions);
+            var customSearchControl=new google.search.CustomSearchControl(mySite_config.googleCSEId,customSearchOptions);
             customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
             var options=new google.search.DrawOptions();
             options.setSearchFormRoot('Google_CS_Box');
             options.setAutoComplete(true);
-            customSearchControl.setAutoCompletionId(config.googleCSEAutoCompletionId);
+            customSearchControl.setAutoCompletionId(mySite_config.googleCSEAutoCompletionId);
             customSearchControl.draw('cse_result', options);
             //Page Search
             if(document.getElementById('Google_Page_CS_Box')){
@@ -1379,12 +1364,12 @@ function loadGoogleJSApi(){
                 imageSearchOptions['layout']=google.search.ImageSearch.LAYOUT_POPUP;
                 customSearchOptions['enableImageSearch']=true;
                 customSearchOptions['imageSearchOptions']=imageSearchOptions;
-                var customSearchControl = new google.search.CustomSearchControl(config.googleCSEId,customSearchOptions);
+                var customSearchControl = new google.search.CustomSearchControl(mySite_config.googleCSEId,customSearchOptions);
                 customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
                 var options = new google.search.DrawOptions();
                 options.setSearchFormRoot('Google_Page_CS_Box');
                 options.setAutoComplete(true);
-                customSearchControl.setAutoCompletionId(config.googleCSEAutoCompletionId);
+                customSearchControl.setAutoCompletionId(mySite_config.googleCSEAutoCompletionId);
                 customSearchControl.draw('cse_Page_result', options);
                 customSearchControl.execute(document.getElementById('goog-wm-qt').value);
             }
