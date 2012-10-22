@@ -41,17 +41,27 @@ var mySite_config = $.extend(true, {
 }, window.mySite_config);
 
 // Avoid `console` errors in browsers that lack a console.
-if(!(window.console && console.log)) {
-  (function () {
-    var noop = function () {};
-    var methods = ['assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error', 'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log', 'markTimeline', 'profile', 'profileEnd', 'markTimeline', 'table', 'time', 'timeEnd', 'timeStamp', 'trace', 'warn'];
+(function() {
+    var method;
+    var noop = function noop() {};
+    var methods = [
+        'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
+        'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',
+        'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd',
+        'timeStamp', 'trace', 'warn'
+    ];
     var length = methods.length;
-    var console = window.console = {};
-    while(length--) {
-      console[methods[length]] = noop;
+    var console = (window.console = window.console || {});
+
+    while (length--) {
+        method = methods[length];
+
+        // Only stub undefined methods.
+        if (!console[method]) {
+            console[method] = noop;
+        }
     }
-  }());
-}
+}());
 
 var qualifyURL = function (url) {
   var div = document.createElement('div');
