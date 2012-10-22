@@ -1,27 +1,38 @@
 /* Author: Abhishek Munie */
 window.jQuery || document.write("\x3Cscript src='https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js'\x3e\x3C/script\x3e");
 
-$('html').addClass(RegExp(" AppleWebKit/").test(navigator.userAgent)?'applewebkit':'not-applewebkit');
+$('html').addClass(RegExp(" AppleWebKit/").test(navigator.userAgent) ?'applewebkit' :'not-applewebkit');
 
 var mySite_config = $.extend(true, {
-  urls: {
-    resource: location.protocol+'//'+location.hostname+'/',
-    workers: {
-      ajax: "/modules/ajaxloader.worker.js",
-      jsonp: "/modules/jsonploader.worker.js"
+  urls : {
+    resource : location.protocol+'//'+location.hostname+'/',
+    workers : {
+      ajax  : "/modules/ajaxloader.worker.js",
+      jsonp : "/modules/jsonploader.worker.js"
     }
   },
-  preloads: [],
-  twitter_streams: [],
-  flickr_photostreams: [],
-  facebookAppId: '',
-  googleAnalyticsID: '',
-  enable: {
-    facebook:true,
-    google_plus:true,
-    google_search:true,
-    cufon:true
-  }
+  preloads : [],
+  twitter_streams : [],
+  flickr_photostreams : [],
+  facebook : undefined /*{
+    appid : undefined
+  }*/,
+  addThis: undefined /*{
+    id : undefined
+  }*/,
+  google : {
+    plus : undefined /*{
+      lang : undefined
+    }*/,
+    analytics : undefined /*{
+      id : undefined
+    }*/,
+    cse : undefined /*{
+      id : undefined,
+      autoCompletionId : undefined
+    }*/
+  },
+  cufon : undefined
 }, window.mySite_config);
 
 // Avoid `console` errors in browsers that lack a console.
@@ -37,11 +48,11 @@ if (!(window.console && console.log)) {
   }());
 }
 
-var qualifyURL=function(url){
-  var div=document.createElement('div');
-  div.innerHTML="<a></a>";
-  div.firstChild.href=url;//Ensures that the href is properly escaped
-  div.innerHTML=div.innerHTML;//Run the current innerHTML back through the parser
+var qualifyURL = function(url) {
+  var div = document.createElement('div');
+  div.innerHTML = "<a></a>";
+  div.firstChild.href = url;//Ensures that the href is properly escaped
+  div.innerHTML = div.innerHTML;//Run the current innerHTML back through the parser
   return div.firstChild.href;
 };
 var getLevels=function(url){
@@ -264,10 +275,10 @@ mySite.location.is404=!!$('.container404')[0];
 if(mySite.location.params.serviceMode)$('html').addClass('serviceMode');
 //navigator.registerProtocolHandler("abhishekmunie","http://abhishekmunie.com/","abhishekmunie Protocol");
 
-if(mySite_config.enable.facebook){
+if(mySite_config.facebook){
   window.fbAsyncInit=function(){
     FB.init({
-      appId   :mySite_config.facebookAppId, // App ID
+      appId   :mySite_config.facebook.appid, // App ID
       channelUrl:'http//'+document.domain+'/channel.html', // Channel File
       status  :true, // check login status
       cookie  :true, // enable cookies to allow the server to access the session
@@ -429,11 +440,14 @@ if(mySite_config.enable.facebook){
     FB.Event.subscribe('auth.logout',function(response){});
   };
   // Load the SDK Asynchronously
-  if(!document.getElementById('facebook-jssdk'))mySite.importScript("//connect.facebook.net/en_US/all.js#appId="+mySite_config.facebookAppId,false,'facebook-jssdk');
+  if(!document.getElementById('facebook-jssdk'))mySite.importScript("//connect.facebook.net/en_US/all.js#appId="+mySite_config.facebook.appid,false,'facebook-jssdk');
 }
 
-if(mySite_config.enable.google_plus){
-  window.___gcfg.parsetags='explicit';
+if(mySite_config.google.plus){
+  window.___gcfg={
+    lang : mySite_config.google.plus.lang || 'en-US',
+    parsetags :'explicit'
+  };
   mySite.importScript('https://apis.google.com/js/plusone.js');
 }
 
@@ -1262,7 +1276,7 @@ jQuery(document).ready(function($){
     mySite.enhanced=true;
     $(document).updateSocialPlugins();
     mySite.refresh();
-    if(mySite_config.enable.cufon)mySite.importScript('//js.abhishekmunie.com/libs/cufon-yui.basicfonts.js',true);
+    if(mySite_config.cufon)mySite.importScript('//js.abhishekmunie.com/libs/cufon-yui.basicfonts.js',true);
     for(var i=0;i<mySite_config.twitter_streams.length;i++)
       mySite.twitter_streams[mySite_config.twitter_streams[i]]=mySite.createTwitterStream(mySite_config.twitter_streams[i]);
     setTimeout("$.preload(mySite_config.preloads)",5000);
@@ -1331,7 +1345,7 @@ jQuery(document).ready(function($){
 
     });
   $('body').append(mySite.overlayTheater.theater);
-  if(mySite_config.enable.google_search)mySite.importScript("https://www.google.com/jsapi?callback=loadGoogleJSApi",true);
+  if(mySite_config.google.cse)mySite.importScript("https://www.google.com/jsapi?callback=loadGoogleJSApi",true);
   mySite.update();
   $('body').drawDoc();
   $('html').addClass('initialized');
