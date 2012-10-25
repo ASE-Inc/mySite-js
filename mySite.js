@@ -281,7 +281,6 @@ var mySite = $.extend(true, {
 
 mySite.location.is404 = !! $('.container404')[0];
 if(mySite.location.params.serviceMode) $('html').addClass('serviceMode');
-//navigator.registerProtocolHandler("abhishekmunie","http://abhishekmunie.com/","abhishekmunie Protocol");
 
 if(mySite_config.facebook) {
   window.fbAsyncInit = function () {
@@ -469,29 +468,8 @@ if(mySite_config.google.plus) {
   }
   return newObj;
 }
-http://ajaxian.com/archives/cor-blimey-cross-domain-ajax-is-really-here
- function createCORSRequest(method,url){
-  var xhr=new XMLHttpRequest();
-  if("withCredentials" in xhr){
-    xhr.open(method,url,true);
-  }else if(typeof XDomainRequest != "undefined"){
-    xhr=new XDomainRequest();
-    xhr.open(method,url);
-  }else{
-    xhr=null;
-  }
-  return xhr;
-}
-
-var request=createCORSRequest("get","http://abhishekmunie.com/");
-if(request){
-  request.onload=function(){
-    //do something with request.responseText
-  };
-  request.send();
-}*/
-//https://gist.github.com/384583 Cross-browser object.watch and object.unwatch
-/*/ object.watch
+*/
+/* object.watch
 if(!Object.prototype.watch)
   Object.prototype.watch=function(prop,handler){
     var oldval=this[prop],newval=oldval,
