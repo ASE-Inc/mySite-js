@@ -260,7 +260,7 @@ class Twitter_Stream
       $.getJSON "https://twitter.com/status/user_timeline/#{@username}.json?count=9#{if @tweets.length > 0 then "&max_id=" + @tweets[@tweets.length - 1].id else ""}&callback=?", (data) =>
         $.each data, (index, tweet) =>
           @tweets.push new Tweet(tweet)
-      #THIS.loader.load.loadTo({url:"https://twitter.com/status/user_timeline/"+THIS.username+".json?count=9"+((THIS.tweets.length>0)?"&max_id="+THIS.tweets[THIS.tweets.length-1].id:"")+"&callback=?"})
+      #@loader.load.loadTo({url:"https://twitter.com/status/user_timeline/#{@username}.json?count=9"+((@tweets.length>0)?"&max_id="+@tweets[@tweets.length-1].id:"")+"&callback=?"})
 
 
 class SerializedAjaxLoader
@@ -285,7 +285,7 @@ class SerializedAjaxLoader
         callback responseText, status, @data
         @queue['current'].callback(responseText, status) if @queue['current'].callback
         @queue['current'] = null
-        @load() if THIS.queue['waiting']
+        @load() if @queue['waiting']
       else
         @onError status #$("#error").html(msg + xhr.status + " " + xhr.statusText)
 
@@ -315,12 +315,12 @@ class SerializedAjaxLoader
         , false
         # Take care of vendor prefixes.
         #mySite.webworkers.ajaxloader.postMessage = mySite.webworkers.ajaxloader.webkitPostMessage || mySite.webworkers.ajaxloader.postMessage
-        @ajaxloader.postMessage THIS.queue['current'].url
+        @ajaxloader.postMessage @queue['current'].url
       else
         jQuery.ajax
-          url: THIS.queue['current'].url
+          url: @queue['current'].url
           type: "GET"
-          dataType: THIS.queue['current'].dataType || "html"
+          dataType: @queue['current'].dataType || "html"
           # Complete callback (responseText is used internally)
           complete: (jqXHR, status, responseText) =>
             try
@@ -440,8 +440,8 @@ mySite = $.extend true,
           $this.replaceAll $('meta[name~="' + $this.attr('name') + '"]')
         else if $this.attr 'property'
           $this.replaceAll $('meta[name~="' + $this.attr('property') + '"]')
-        else if THIS.attr 'itemprop'
-          THIS.replaceAll $('meta[name~="' + THIS.attr('itemprop') + '"]')
+        else if $this.attr 'itemprop'
+          $this.replaceAll $('meta[name~="' + $this.attr('itemprop') + '"]')
 
       responseDOM = null
       $("#PL" + mySite.location.pageChangeLevel).drawDoc().updateSocialPlugins()
