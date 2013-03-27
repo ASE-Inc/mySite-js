@@ -496,7 +496,16 @@ mySite = $.extend true,
   user:
     facebook: undefined
   overlayTheater:
-    theater: $ '<aside id="overlayTheaterBack" class="overlayTheaterBack" onclick="mySite.overlayTheater.close()"></aside>' + '<aside id="overlayTheater" class="overlayTheater">' + '<img class="LoadingImg" src="/img/icons/loading.png" alt="Loading..."/>' + '<div class="info"><div id="msg"></div></div>' + '<div class="warning"><div id="msg"></div></div>' + '<div class="error"><div id="msg"></div></div>' + '<div class="learnmore"><div id="msg"></div></div>' + '</div>' + '</aside>'
+    theater: $ """
+      <aside id="overlayTheaterBack" class="overlayTheaterBack" onclick="mySite.overlayTheater.close()"></aside>
+      <aside id="overlayTheater" class="overlayTheater">
+        <img class="LoadingImg" src="/img/icons/loading.png" alt="Loading..."/>
+        <div class="info"><div id="msg"></div></div>
+        <div class="warning"><div id="msg"></div></div>
+        <div class="error"><div id="msg"></div></div>
+        <div class="learnmore"><div id="msg"></div></div>
+      </aside>
+    """
     info: (msg) ->
       $('html').addClass 'info'
       $('.info .msg').html msg
@@ -537,7 +546,7 @@ mySite = $.extend true,
   cloneObject: (o) ->
     newObj = if o instanceof Array then [] else {}
     for k,v in o
-      if v and typeof 0[k] is "object"
+      if v and typeof(0[k]) is "object"
         newObj[k] = cloneThis v
       else newObj[k] = v
     newObj
